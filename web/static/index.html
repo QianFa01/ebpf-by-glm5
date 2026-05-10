@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eBPF Security Monitor</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>eBPF Security Monitor</h1>
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <span class="label">连接数:</span>
+                    <span id="client-count" class="value">0</span>
+                </div>
+                <div class="stat-item">
+                    <span class="label">运行时间:</span>
+                    <span id="uptime" class="value">0s</span>
+                </div>
+                <div class="stat-item">
+                    <span class="label">事件总数:</span>
+                    <span id="total-events" class="value">0</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="filters">
+            <button class="filter-btn active" data-filter="all">全部</button>
+            <button class="filter-btn" data-filter="process">进程</button>
+            <button class="filter-btn" data-filter="network">网络</button>
+            <button class="filter-btn" data-filter="file">文件</button>
+        </div>
+
+        <div class="event-counts">
+            <div class="count-item process">
+                <span class="name">进程事件</span>
+                <span id="process-count" class="count">0</span>
+            </div>
+            <div class="count-item network">
+                <span class="name">网络事件</span>
+                <span id="network-count" class="count">0</span>
+            </div>
+            <div class="count-item file">
+                <span class="name">文件事件</span>
+                <span id="file-count" class="count">0</span>
+            </div>
+        </div>
+
+        <div class="event-container">
+            <table class="event-table">
+                <thead>
+                    <tr>
+                        <th>时间</th>
+                        <th>类型</th>
+                        <th>进程</th>
+                        <th>PID</th>
+                        <th>详情</th>
+                        <th>容器</th>
+                    </tr>
+                </thead>
+                <tbody id="event-list">
+                </tbody>
+            </table>
+        </div>
+
+        <div id="connection-status" class="status disconnected">
+            <span class="indicator"></span>
+            <span class="text">未连接</span>
+        </div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
