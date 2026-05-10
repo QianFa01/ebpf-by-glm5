@@ -9,6 +9,10 @@ import (
 	"sync"
 )
 
+var getCgroupPathForPID = func(pid uint32) string {
+	return fmt.Sprintf("/proc/%d/cgroup", pid)
+}
+
 type ContainerInfo struct {
 	ID        string
 	Name      string
@@ -29,7 +33,7 @@ func NewDetector() *Detector {
 }
 
 func (d *Detector) GetContainerID(pid uint32) string {
-	cgroupPath := fmt.Sprintf("/proc/%d/cgroup", pid)
+	cgroupPath := getCgroupPathForPID(pid)
 	file, err := os.Open(cgroupPath)
 	if err != nil {
 		return ""
@@ -59,7 +63,7 @@ func (d *Detector) GetContainerInfo(containerID string) (*ContainerInfo, bool) {
 }
 
 func (d *Detector) IsContainerPID(pid uint32) bool {
-	cgroupPath := fmt.Sprintf("/proc/%d/cgroup", pid)
+	cgroupPath := getCgroupPathForPID(pid)
 	file, err := os.Open(cgroupPath)
 	if err != nil {
 		return false

@@ -34,11 +34,19 @@ func main() {
 	eventChan := make(chan interface{}, 10000)
 	go func() {
 		for event := range loader.Events() {
+			if m, ok := event.(map[string]interface{}); ok {
+				if pid, ok := m["pid"].(uint32); ok {
+					if cid := detector.GetContainerID(pid); cid != "" {
+						if existing, ok := m["container_id"].(string); !ok || existing == "" {
+							m["container_id"] = cid
+						}
+					}
+				}
+			}
 			data, err := json.Marshal(event)
 			if err != nil {
 				continue
 			}
-
 			select {
 			case eventChan <- data:
 			default:

@@ -113,8 +113,18 @@ func (s *Server) readEvents() {
 			if t, ok := m["type"].(string); ok {
 				event.Type = t
 			}
+			if ts, ok := m["timestamp"]; ok {
+				switch v := ts.(type) {
+				case uint64:
+					event.Timestamp = int64(v)
+				case float64:
+					event.Timestamp = int64(v)
+				}
+			}
 			event.Data = m
 		}
+
+		addRecentEvent(event)
 
 		select {
 		case s.broadcast <- event:
@@ -259,23 +269,3 @@ func addRecentEvent(event Event) {
 	eventCountsMux.Unlock()
 }
 
-func init() {
-	go func() {
-		for {
-			select {
-			case event := <-broadcastChan:
-				addRecentEvent(event)
-			}
-		}
-	}()
-}
-
-var broadcastChan = make(chan Event, 10000)
-
-func init() {
-	go func() {
-		for event := range broadcastChan {
-			addRecentEvent(event)
-		}
-	}()
-}
